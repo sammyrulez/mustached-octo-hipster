@@ -39,6 +39,17 @@ class BankAccountTest extends FlatSpec with Matchers {
 	  
 	}
 	
+	it should " track all transactions " in {
+	  val bankAccount = new BankAccount()
+	   bankAccount.deposit(10.)
+	   bankAccount.withdraw(5.)
+	   bankAccount.withdraw(9.)
+	   bankAccount.balance should be (0.)
+	   bankAccount.getTransactions().size should be (3)
+	  
+	}
+	
+	
 	
 	
 	
