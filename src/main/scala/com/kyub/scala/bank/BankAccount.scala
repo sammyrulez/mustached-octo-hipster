@@ -60,7 +60,8 @@ class BankAccount(val initialBalance: Double = 0) extends TransactionContainer w
     for (op <- getTransactions()){
       transact = transact + op.updateBalance()
     }
-    initialBalance + transact } 
+    initialBalance + transact 
+  } 
 
   def deposit(money: Double) {
     if (money > 0.)      
@@ -76,4 +77,26 @@ class BankAccount(val initialBalance: Double = 0) extends TransactionContainer w
 
   }
 
+}
+
+class CreditCard(val maxCover: Double)  extends TransactionContainer{
+  
+  def expenseSoFar() ={ 
+    var transact = 0.
+    for (op <- getTransactions()){
+      transact = transact + (op.updateBalance()* (-1.0))
+    }
+    transact 
+  } 
+  
+  
+  def withdraw(money: Double) {
+    money match {
+      case x if x < 0 => println("Failing silenty")
+      case x if (x + expenseSoFar()) > maxCover => println("Refused " + x + " + " +  expenseSoFar() + " > " + maxCover )
+      case otherNumber =>   addTransaction(new Withdraw(money,new Date()))
+    }
+  }
+  
+  
 }

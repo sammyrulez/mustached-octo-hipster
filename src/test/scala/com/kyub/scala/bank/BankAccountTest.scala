@@ -55,4 +55,25 @@ class BankAccountTest extends FlatSpec with Matchers {
 	  
 	}	
 	
+	"A credit card" should " track all transactions " in {
+	  val creditCard = new CreditCard(100.)
+
+	   creditCard.withdraw(5.)
+	 
+	   creditCard.withdraw(9.)
+
+	   creditCard.withdraw(9.)
+	 
+	   creditCard.getTransactions().size should be (3)
+	  
+	}
+	
+	it should "refuse withdraw over max cover" in {
+	   val creditCard = new CreditCard(100.)
+	   creditCard.withdraw(5.)
+	   creditCard.withdraw(96.)
+	   creditCard.getTransactions().size should be (1)
+	  
+	}
+	
 }
