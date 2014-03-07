@@ -21,6 +21,12 @@ trait TransactionContainer{
   
 }
 
+trait Asset{
+  
+  def value():Double
+  
+}
+
 
 class Deposit(depositMoney: Double, depositDate: Date) extends AccountOperation{
 	
@@ -47,19 +53,25 @@ class Withdraw(depositMoney: Double, depositDate: Date) extends AccountOperation
 }
 
 
-class BankAccount(var balance: Double = 0) extends TransactionContainer {
+class BankAccount(val initialBalance: Double = 0) extends TransactionContainer with Asset {
+  
+  def value() ={ 
+    var transact = 0.
+    for (op <- getTransactions()){
+      transact = transact + op.updateBalance()
+    }
+    initialBalance + transact } 
 
   def deposit(money: Double) {
-    if (money > 0.)
-      balance = balance + money;
+    if (money > 0.)      
       addTransaction(new Deposit(money,new Date()))
   }
 
   def withdraw(money: Double) {
     money match {
       case x if x < 0 => println("Failing silenty")
-      case x if x > balance => balance = 0. ; addTransaction(new Withdraw(x-balance,new Date()))
-      case otherNumber => balance = balance - money;  addTransaction(new Withdraw(money,new Date()))
+      case x if x > value() => addTransaction(new Withdraw(value(),new Date()))
+      case otherNumber =>  addTransaction(new Withdraw(money,new Date()))
     }
 
   }
