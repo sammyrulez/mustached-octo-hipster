@@ -19,11 +19,20 @@ trait TransactionContainer{
   
   def getTransactions():List[AccountOperation] = transactions
   
+   protected def computeActualValue: Double = { 
+   
+    transactions.size match {
+      case  x if x > 0 => (transactions map { (_.updateBalance())} ). reduceLeft { (_ + _) }
+      case otherNumber => 0.
+    }
+  }
+  
+  
 }
 
 trait Asset{
   
-  def value():Double
+  def value :Double
   
 }
 
@@ -55,15 +64,8 @@ class Withdraw(depositMoney: Double, depositDate: Date) extends AccountOperation
 
 class BankAccount(val initialBalance: Double = 0) extends TransactionContainer with Asset {
   
-  def value() = {
-    val extractedLocalValue = getTransactions() 
-    extractedLocalValue.size match {
-      case  x if x > 0 => initialBalance + (extractedLocalValue map { (_.updateBalance())} ). reduceLeft { (_ + _) }
-      case otherNumber => initialBalance
-    }
+  def value() = initialBalance + computeActualValue
     
-  } 
-
   def deposit(money: Double) {
     if (money > 0.)      
       addTransaction(new Deposit(money,new Date()))
@@ -80,24 +82,22 @@ class BankAccount(val initialBalance: Double = 0) extends TransactionContainer w
 
 }
 
-class CreditCard(val maxCover: Double)  extends TransactionContainer{
+class CreditCard(val maxCover: Double)  extends TransactionContainer {
   
-  def expenseSoFar() ={ 
-    val extractedLocalValue = getTransactions() 
-    extractedLocalValue.size match {
-      case  x if x > 0 => (extractedLocalValue map { (_.updateBalance())} ). reduceLeft { (_ + _) }
-      case otherNumber => 0.
-    }
-  } 
+ 
   
   
   def withdraw(money: Double) {
+    
+    
     money match {
       case x if x < 0 => println("Failing silenty")
-      case x if (x + expenseSoFar()) > maxCover => println("Refused " + x + " + " +  expenseSoFar() + " > " + maxCover )
+      case x if (x + ( (-1.0) * computeActualValue)) > maxCover => println("Refused " + x + " + " + computeActualValue + " > " + maxCover )
       case otherNumber =>   addTransaction(new Withdraw(money,new Date()))
     }
   }
+  
+ 
   
   
 }
