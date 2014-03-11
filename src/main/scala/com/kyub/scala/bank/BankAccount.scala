@@ -55,12 +55,13 @@ class Withdraw(depositMoney: Double, depositDate: Date) extends AccountOperation
 
 class BankAccount(val initialBalance: Double = 0) extends TransactionContainer with Asset {
   
-  def value() ={ 
-    var transact = 0.
-    for (op <- getTransactions()){
-      transact = transact + op.updateBalance()
+  def value() = {
+    val extractedLocalValue = getTransactions() 
+    extractedLocalValue.size match {
+      case  x if x > 0 => initialBalance + (extractedLocalValue map { (_.updateBalance())} ). reduceLeft { (_ + _) }
+      case otherNumber => initialBalance
     }
-    initialBalance + transact 
+    
   } 
 
   def deposit(money: Double) {
@@ -82,11 +83,11 @@ class BankAccount(val initialBalance: Double = 0) extends TransactionContainer w
 class CreditCard(val maxCover: Double)  extends TransactionContainer{
   
   def expenseSoFar() ={ 
-    var transact = 0.
-    for (op <- getTransactions()){
-      transact = transact + (op.updateBalance()* (-1.0))
+    val extractedLocalValue = getTransactions() 
+    extractedLocalValue.size match {
+      case  x if x > 0 => (extractedLocalValue map { (_.updateBalance())} ). reduceLeft { (_ + _) }
+      case otherNumber => 0.
     }
-    transact 
   } 
   
   
