@@ -1,6 +1,7 @@
 package com.kyub.scala.bank
 
 import org.scalatest._
+import java.util.Date
 
 class BankAccountTest extends FlatSpec with Matchers {
 	
@@ -73,6 +74,21 @@ class BankAccountTest extends FlatSpec with Matchers {
 	   creditCard.withdraw(5.)
 	   creditCard.withdraw(96.)
 	   creditCard.getTransactions().size should be (1)
+	  
+	}
+	
+	"A Risk Manager" should "accept Risky Operations" in {
+	 
+	  RiskManager.addRiskyOperation(new Withdraw(10.,new Date()), new BankAccount()) should be (true)
+	  val creditCard = new CreditCard(5)
+	  (RiskManager.addRiskyOperation(new Withdraw(10.,new Date()), creditCard)) should be (true)
+	  
+	  
+	}
+	
+	it should " manage risk grade" in {
+	  
+	  RiskManager.riskGrade should be (2.)
 	  
 	}
 	

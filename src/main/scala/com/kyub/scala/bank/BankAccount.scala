@@ -5,11 +5,30 @@ import java.util.Date
 
 trait AccountOperation{
   
-	def refDate():Date
+	def refDate :Date
 	
 	def updateBalance(): Double
   
 }
+
+object RiskManager{
+  
+	var riskGrades = List(0)
+	
+	def riskGrade: Int = (riskGrades reduceLeft { (_ + _) })
+	
+	
+	def addRiskyOperation(op:AccountOperation,accountable:Any):Boolean = {
+	  
+	  accountable match {
+	  	case b : BankAccount => if (b.value() + op.updateBalance() < 0) {riskGrades =  1 :: riskGrades} ; return true
+	  	case c : CreditCard =>  if (c.computedActualValue + op.updateBalance() < (-1.0)*c.maxCover) {riskGrades =  1 :: riskGrades} ; return true
+	  	case other => println("Unsupported"); return false
+	  }
+	}  
+}
+
+
 
 trait TransactionContainer{
   
@@ -19,8 +38,7 @@ trait TransactionContainer{
   
   def getTransactions():List[AccountOperation] = transactions
   
-   protected def computeActualValue: Double = { 
-   
+  def computedActualValue: Double = {    
     transactions.size match {
       case  x if x > 0 => (transactions map { (_.updateBalance())} ). reduceLeft { (_ + _) }
       case otherNumber => 0.
@@ -49,14 +67,13 @@ class Deposit(depositMoney: Double, depositDate: Date) extends AccountOperation{
   
 }
 
-class Withdraw(depositMoney: Double, depositDate: Date) extends AccountOperation{
+class Withdraw(withdrawMoney: Double, depositDate: Date) extends AccountOperation{
 	
-	def refDate() = {
-	  depositDate
-	}  
+	def refDate =  depositDate
+	
 	
 	def updateBalance() = {
-	  depositMoney * (-1.0)
+	  withdrawMoney * (-1.0)
 	}
   
 }
@@ -64,7 +81,7 @@ class Withdraw(depositMoney: Double, depositDate: Date) extends AccountOperation
 
 class BankAccount(val initialBalance: Double = 0) extends TransactionContainer with Asset {
   
-  def value() = initialBalance + computeActualValue
+  def value() = initialBalance + computedActualValue
     
   def deposit(money: Double) {
     if (money > 0.)      
@@ -92,7 +109,7 @@ class CreditCard(val maxCover: Double)  extends TransactionContainer {
     
     money match {
       case x if x < 0 => println("Failing silenty")
-      case x if (x + ( (-1.0) * computeActualValue)) > maxCover => println("Refused " + x + " + " + computeActualValue + " > " + maxCover )
+      case x if (x + ( (-1.0) * computedActualValue)) > maxCover => println("Refused " + x + " + " + computedActualValue + " > " + maxCover )
       case otherNumber =>   addTransaction(new Withdraw(money,new Date()))
     }
   }
