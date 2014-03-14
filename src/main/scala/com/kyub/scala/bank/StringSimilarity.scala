@@ -17,10 +17,11 @@ object LevenshteinStringSimilarity {
        
     strAasList.zipWithIndex foreach { case (valueA,indexA) if  indexA > 0 =>
       									strBasList.zipWithIndex foreach {  case (valueB,indexB) if  indexB > 0 => 
-      									    myMatrix(indexA)(indexB) = List( myMatrix( indexA - 1)( indexB     ) + 1,    						  // insert
-      									    						  myMatrix( indexA    )( indexB - 1 ) + 1,   						  // delete
-      									    						  myMatrix( indexA - 1)( indexB - 1 ) +  charDistance(valueA,valueB)   // sub
-		            		 				).min
+      									    myMatrix(indexA)(indexB) = 
+      									           List( myMatrix( indexA - 1)( indexB     ) + 1,    						  // insert
+      									    		     myMatrix( indexA    )( indexB - 1 ) + 1,   						  // delete
+      									    			 myMatrix( indexA - 1)( indexB - 1 ) +  charDistance(valueA,valueB)   // sub
+		            		 				            ).min
       									case _ => Nil
       									}
       								case _ => Nil

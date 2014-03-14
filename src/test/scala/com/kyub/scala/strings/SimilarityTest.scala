@@ -15,8 +15,7 @@ class SimilarityTest extends FlatSpec with Matchers  {
     
   }
   
-  "Levenshtein Distance of 'sam chapman' and 'sam john chapman' " should " be 5" in {
-    
+  "Levenshtein Distance of 'sam chapman' and 'sam john chapman' " should " be 5" in {    
     LevenshteinStringSimilarity.evalDistance("sam chapman", "sam john chapman") should be (5)
   }
 
