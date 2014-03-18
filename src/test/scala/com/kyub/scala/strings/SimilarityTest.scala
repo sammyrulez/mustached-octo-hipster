@@ -1,6 +1,8 @@
 package com.kyub.scala.strings
 import org.scalatest._
 import com.kyub.scala.bank.LevenshteinStringSimilarity
+import com.kyub.scala.bank.NeedlemanStringSimilarity
+
 
 
 class SimilarityTest extends FlatSpec with Matchers  {
@@ -17,6 +19,11 @@ class SimilarityTest extends FlatSpec with Matchers  {
   
   "Levenshtein Distance of 'sam chapman' and 'sam john chapman' " should " be 5" in {    
     LevenshteinStringSimilarity.evalDistance("sam chapman", "sam john chapman") should be (5)
+  }
+  
+  "Needleman Distance of 'sam chapman' and 'sam john chapman' with gap cost of 2 " should " be 7" in { 
+    NeedlemanStringSimilarity.evalDistance("sam chapman", "sam john chapman",2) should be (7)
+    
   }
 
 }
