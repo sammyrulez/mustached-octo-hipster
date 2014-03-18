@@ -1,4 +1,4 @@
-package com.kyub.scala.bank
+package com.kyub.scala.strings
 
 trait MatrixBasedSimilarity {
 

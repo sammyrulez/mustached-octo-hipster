@@ -1,7 +1,5 @@
 package com.kyub.scala.strings
 import org.scalatest._
-import com.kyub.scala.bank.LevenshteinStringSimilarity
-import com.kyub.scala.bank.NeedlemanStringSimilarity
 
 
 
